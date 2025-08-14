@@ -1,7 +1,9 @@
 #include <csignal>
 #include <iostream>
+#include <utility>
 using namespace std;
 
+int arr[100];
 int n;
 void maxheapfiy(int *a, int i, int len);
 void buildMaxHeap(int *a);
@@ -9,7 +11,7 @@ void heapsort(int *a);
 
 int main() {
   cin >> n;
-  int arr[n];
+
   for (int i = 0; i < n; i++)
     cin >> arr[i];
 
@@ -21,7 +23,7 @@ int main() {
 }
 
 void buildMaxHeap(int *a) {
-  for (int i = n / 2; i >= 0; i--) {
+  for (int i = n / 2 + 1; i >= 0; i--) {
     maxheapfiy(a, i, n);
   }
 }
@@ -29,15 +31,19 @@ void buildMaxHeap(int *a) {
 void maxheapfiy(int *a, int i, int len) {
   int l = 2 * i, r = l + 1;
   int largest = i;
-  if (l <= len - 1 && a[largest] < a[l])
-    largest = l;
-  if (r <= len - 1 && a[largest] < a[r])
-    largest = r;
-  if (largest != i) {
-    int tmp = a[i];
-    a[i] = a[largest];
-    a[largest] = tmp;
-    maxheapfiy(a, largest, len);
+  while (r <= len - 1) {
+    if (l <= len - 1 && a[largest] < a[l])
+      largest = l;
+    if (r <= len - 1 && a[largest] < a[r])
+      largest = r;
+    if (largest != i) {
+      std::swap(a[i], a[largest]);
+      i = largest;
+      l = 2 * i;
+      r = l + 1;
+      // maxheapfiy(a, largest, len);
+    } else
+      return;
   }
   return;
 }
@@ -45,9 +51,7 @@ void maxheapfiy(int *a, int i, int len) {
 void heapsort(int *a) {
   buildMaxHeap(a);
   for (int i = n - 1; i >= 1; i--) {
-    int tmp = a[i];
-    a[i] = a[0];
-    a[0] = tmp;
+    std::swap(a[i], a[0]);
     maxheapfiy(a, 0, i);
   }
 }

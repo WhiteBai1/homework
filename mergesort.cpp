@@ -1,12 +1,13 @@
 #include <iostream>
 using namespace std;
 
+int arr[100];
 int n;
 void mergesort(int *a, int l, int r);
 
 int main() {
   cin >> n;
-  int arr[n];
+
   for (int i = 0; i < n; i++)
     cin >> arr[i];
 
@@ -17,6 +18,8 @@ int main() {
   return 0;
 }
 
+int tmp[100];
+
 void mergesort(int *a, int l, int r) {
   if (r - l <= 1)
     return;
@@ -25,7 +28,6 @@ void mergesort(int *a, int l, int r) {
   mergesort(a, l, mid);
   mergesort(a, mid + 1, r);
 
-  int tmp[n];
   int i = l, j = mid + 1, k = l;
   for (; i <= mid && j <= r;) {
     if (a[i] >= a[j]) {

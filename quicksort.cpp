@@ -2,13 +2,13 @@
 // #include <vector>
 using namespace std;
 
+int arr[100];
 int n;
 int partition(int *a, int l, int r);
 void quicksort(int *a, int l, int r);
 
 int main() {
   cin >> n;
-  int arr[n];
 
   // vector<int>arr;
   // int num;
@@ -25,7 +25,7 @@ int main() {
 
   for (int i = n - 1; i >= 0; i--)
     cout << arr[i] << " ";
-  cout << endl;
+  cout << '\n';
   return 0;
 }
 
@@ -44,15 +44,11 @@ int partition(int *a, int l, int r) {
     if (a[j] <= x) {
       i++;
       if (j != i) {
-        int tmp = a[i];
-        a[i] = a[j];
-        a[j] = tmp;
+        std::swap(a[i],a[j]);
       }
     }
   }
   i++;
-  int tmp = a[i];
-  a[i] = a[r];
-  a[r] = tmp;
+  std::swap(a[i], a[r]);
   return i;
 }

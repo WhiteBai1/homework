@@ -10,6 +10,6 @@ int main() {
   for (int i = 1; i <= n; i++) {
     std::cout << rnd() % 100 << " ";
   }
-  std::cout << std::endl;
+  std::cout << '\n';
   return 0;
 }
