@@ -1,27 +1,12 @@
 #include <iostream>
 using namespace std;
 
-int arr[100];
+float arr[1000000];
 int n;
-void mergesort(int *a, int l, int r);
+float tmp[1000000];
 
-int main() {
-  cin >> n;
-
-  for (int i = 0; i < n; i++)
-    cin >> arr[i];
-
-  mergesort(arr, 0, n - 1);
-
-  for (int i = 0; i < n; i++)
-    cout << arr[i] << " ";
-  return 0;
-}
-
-int tmp[100];
-
-void mergesort(int *a, int l, int r) {
-  if (r - l <= 1)
+template <typename T> void mergesort(T *a, int l, int r) {
+  if (l >= r)
     return;
 
   int mid = l + (r - l) / 2;
@@ -30,7 +15,7 @@ void mergesort(int *a, int l, int r) {
 
   int i = l, j = mid + 1, k = l;
   for (; i <= mid && j <= r;) {
-    if (a[i] >= a[j]) {
+    if (a[i] <= a[j]) {
       tmp[k] = a[i];
       i++;
     } else {
@@ -60,4 +45,23 @@ void mergesort(int *a, int l, int r) {
     k++;
   }
   return;
+}
+
+template <typename T> void inputArray(T arr[], int n) {
+  for (int i = 0; i < n; i++)
+    std::cin >> arr[i];
+}
+
+int main() {
+  cin >> n;
+
+  /*for (int i = 0; i < n; i++)
+    cin >> arr[i];*/
+  inputArray(arr, n);
+
+  mergesort(arr, 0, n - 1);
+
+  for (int i = 0; i < n; i++)
+    cout << arr[i] << " ";
+  return 0;
 }
