@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-int arr[100];
+int arr[1000000];
 int n;
 void mergesort(int *a, int l, int r);
 
@@ -21,7 +21,7 @@ int main() {
 int tmp[100];
 
 void mergesort(int *a, int l, int r) {
-  if (r - l <= 1)
+  if (l >= r)
     return;
 
   int mid = l + (r - l) / 2;

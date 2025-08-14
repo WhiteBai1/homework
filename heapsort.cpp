@@ -3,7 +3,7 @@
 #include <utility>
 using namespace std;
 
-int arr[100];
+int arr[1000000];
 int n;
 void maxheapfiy(int *a, int i, int len);
 void buildMaxHeap(int *a);

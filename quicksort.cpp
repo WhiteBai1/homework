@@ -1,14 +1,24 @@
+#include <fstream>
 #include <iostream>
 // #include <vector>
 using namespace std;
 
-int arr[100];
+const int MAXN = 1000000;
+
+int arr[MAXN];
 int n;
 int partition(int *a, int l, int r);
 void quicksort(int *a, int l, int r);
 
 int main() {
-  cin >> n;
+
+  std::ifstream infile("result.txt");
+  if (!infile.is_open()) {
+    std::cerr << "Failed to open result1 file!" << '\n';
+    return 1;
+  }
+
+  infile >> n;
 
   // vector<int>arr;
   // int num;
@@ -19,13 +29,22 @@ int main() {
       n++;
   }**/
   for (int i = 0; i < n; i++)
-    cin >> arr[i];
+    infile >> arr[i];
+
+  infile.close();
+
+  std::ofstream outfile("result2.txt");
+  if (!outfile.is_open()) {
+    std::cerr << "fail to open result2 file" << '\n';
+    return 1;
+  }
 
   quicksort(arr, 0, n - 1);
 
   for (int i = n - 1; i >= 0; i--)
-    cout << arr[i] << " ";
-  cout << '\n';
+    outfile << arr[i] << " ";
+  outfile << '\n';
+  outfile.close();
   return 0;
 }
 
@@ -44,7 +63,7 @@ int partition(int *a, int l, int r) {
     if (a[j] <= x) {
       i++;
       if (j != i) {
-        std::swap(a[i],a[j]);
+        std::swap(a[i], a[j]);
       }
     }
   }
