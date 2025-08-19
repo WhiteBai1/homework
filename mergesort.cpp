@@ -8,6 +8,8 @@ int arr[1000000];
 void mergesort(int *a, int l, int r);
 
 int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
 
   const int runs = 100;
   double totalTime = 0;
