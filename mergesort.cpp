@@ -1,24 +1,44 @@
+#include <chrono>
+#include <cstdlib>
+#include <fstream>
 #include <iostream>
 using namespace std;
 
 int arr[1000000];
-int n;
 void mergesort(int *a, int l, int r);
 
 int main() {
-  cin >> n;
 
-  for (int i = 0; i < n; i++)
-    cin >> arr[i];
+  const int runs = 100;
+  double totalTime = 0;
 
-  mergesort(arr, 0, n - 1);
+  for (int i = 0; i < runs; i++) {
+    int ret = system("./datagen");
+    std::ifstream infile("result.txt");
+    if (!infile) {
+      cerr << "错误: 无法打开 result.txt (run " << runs << ")\n";
+      return 1;
+    }
+    int n;
+    infile >> n;
 
-  for (int i = 0; i < n; i++)
-    cout << arr[i] << " ";
+    for (int i = 0; i < n; i++)
+      infile >> arr[i];
+    infile.close();
+    auto start = chrono::high_resolution_clock::now();
+    mergesort(arr, 0, n - 1);
+    auto end = chrono::high_resolution_clock::now();
+    totalTime += chrono::duration<double>(end - start).count();
+  }
+
+  double averageTime = totalTime / runs;
+  /*for (int i = 0; i < n; i++)
+    cout << arr[i] << " ";*/
+  cout << averageTime << '\n';
   return 0;
 }
 
-int tmp[100];
+int tmp[1000000];
 
 void mergesort(int *a, int l, int r) {
   if (l >= r)
