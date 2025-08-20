@@ -1,7 +1,11 @@
+#include "datagen.hpp"
 #include <chrono>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <vector>
+
+extern void datagenerate(int n);
 using namespace std;
 
 int arr[1000000];
@@ -14,29 +18,42 @@ int main() {
   const int runs = 100;
   double totalTime = 0;
 
-  for (int i = 0; i < runs; i++) {
-    int ret = system("./datagen");
-    std::ifstream infile("result.txt");
-    if (!infile) {
-      cerr << "错误: 无法打开 result.txt (run " << runs << ")\n";
-      return 1;
-    }
-    int n;
-    infile >> n;
-
-    for (int i = 0; i < n; i++)
-      infile >> arr[i];
-    infile.close();
-    auto start = chrono::high_resolution_clock::now();
-    mergesort(arr, 0, n - 1);
-    auto end = chrono::high_resolution_clock::now();
-    totalTime += chrono::duration<double>(end - start).count();
+  vector<int> data_sizes;
+  int scale;
+  while (cin >> scale) {
+    data_sizes.push_back(scale);
   }
 
-  double averageTime = totalTime / runs;
-  /*for (int i = 0; i < n; i++)
-    cout << arr[i] << " ";*/
-  cout << averageTime << '\n';
+  int size = data_sizes.size();
+
+  for (int datatest = 0; datatest < size; datatest++) {
+    int scale = data_sizes[datatest];
+    datagenerate(scale);
+    totalTime = 0;
+    for (int i = 0; i < runs; i++) {
+      // int ret = system("./datagen");
+      std::ifstream infile("result.txt");
+      if (!infile) {
+        cerr << "错误: 无法打开 result.txt (run " << runs << ")\n";
+        return 1;
+      }
+      int n;
+      infile >> n;
+
+      for (int j = 0; j < n; j++)
+        infile >> arr[j];
+      infile.close();
+      auto start = chrono::high_resolution_clock::now();
+      mergesort(arr, 0, n - 1);
+      auto end = chrono::high_resolution_clock::now();
+      totalTime += chrono::duration<double>(end - start).count();
+    }
+
+    double averageTime = totalTime / runs;
+    /*for (int i = 0; i < n; i++)
+      cout << arr[i] << " ";*/
+    cout << averageTime << '\n';
+  }
   return 0;
 }
 
