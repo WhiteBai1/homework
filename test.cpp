@@ -153,8 +153,8 @@ void reversedata(int scale) {
 }
 
 using duration = std::chrono::duration<double, std::milli>;
-duration test(void (*sort_func)(std::vector<float> &), void (*data_func)(int),
-              int scale, int repeat_times) {
+duration test(void (*sort_func)(std::vector<float> &),
+              std::function<void(int)> data_func, int scale, int repeat_times) {
   auto total_time = duration(0);
   for (int i = 0; i < repeat_times; i++) {
     data_func(scale);
@@ -164,6 +164,17 @@ duration test(void (*sort_func)(std::vector<float> &), void (*data_func)(int),
     total_time += std::chrono::duration_cast<duration>(end - start);
   }
   return total_time / repeat_times;
+}
+
+std::function<void(int)> data_func_input(const std::string &data_func) {
+  if (data_func == "randomdata")
+    return &randomdata;
+  else if (data_func == "sortdata")
+    return &sortdata;
+  else if (data_func == "reversedata")
+    return &reversedata;
+  else
+    return nullptr;
 }
 
 int main(int argc, char *argv[]) {
@@ -178,40 +189,19 @@ int main(int argc, char *argv[]) {
   int scale = std::stoi(argv[3]);
   int repeat_times = std::stoi(argv[4]);
 
+  auto data_f = data_func_input(data_func);
+  if (data_f == nullptr) {
+    std::cout << "data_func input error" << '\n';
+    return 1;
+  }
+
   duration result;
   if (sort_func == "mergesort") {
-    if (data_func == "randomdata")
-      result = test(mergesort, randomdata, scale, repeat_times);
-    else if (data_func == "sortdata")
-      result = test(mergesort, sortdata, scale, repeat_times);
-    else if (data_func == "reversedata")
-      result = test(mergesort, reversedata, scale, repeat_times);
-    else {
-      std::cout << "data_func input error" << '\n';
-      return 1;
-    }
+    result = test(mergesort, data_f, scale, repeat_times);
   } else if (sort_func == "heapsort") {
-    if (data_func == "randomdata")
-      result = test(heapsort, randomdata, scale, repeat_times);
-    else if (data_func == "sortdata")
-      result = test(heapsort, sortdata, scale, repeat_times);
-    else if (data_func == "reversedata")
-      result = test(heapsort, reversedata, scale, repeat_times);
-    else {
-      std::cout << "data_func input error" << '\n';
-      return 1;
-    }
+    result = test(heapsort, data_f, scale, repeat_times);
   } else if (sort_func == "quicksort") {
-    if (data_func == "randomdata")
-      result = test(quicksort, randomdata, scale, repeat_times);
-    else if (data_func == "sortdata")
-      result = test(quicksort, sortdata, scale, repeat_times);
-    else if (data_func == "reversedata")
-      result = test(quicksort, reversedata, scale, repeat_times);
-    else {
-      std::cout << "data_func input error" << '\n';
-      return 1;
-    }
+    result = test(quicksort, data_f, scale, repeat_times);
   } else {
     std::cout << "sort_func input error" << '\n';
     return 1;
