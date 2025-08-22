@@ -8,9 +8,6 @@
 #include <string>
 #include <vector>
 
-std::vector<float> arr;
-std::vector<float> tmp;
-
 void quicksort(std::vector<float> &a);
 void mergesort(std::vector<float> &a);
 void heapsort(std::vector<float> &a);
@@ -47,13 +44,13 @@ void quicksort(std::vector<float> &a) {
 }
 
 // mergesort
-void msort(std::vector<float> &a, int l, int r) {
+void msort(std::vector<float> &a, int l, int r, std::vector<float> &tmp) {
   if (l >= r)
     return;
 
   int mid = l + (r - l) / 2;
-  msort(a, l, mid);
-  msort(a, mid + 1, r);
+  msort(a, l, mid, tmp);
+  msort(a, mid + 1, r, tmp);
 
   int i = l, j = mid + 1, k = l;
   for (; i <= mid && j <= r;) {
@@ -89,9 +86,10 @@ void msort(std::vector<float> &a, int l, int r) {
 }
 
 void mergesort(std::vector<float> &a) {
+  std::vector<float> tmp;
   int n = a.size();
   tmp.resize(n);
-  msort(a, 0, n - 1);
+  msort(a, 0, n - 1, tmp);
   tmp.reserve(n);
   return;
 }
@@ -132,32 +130,35 @@ void heapsort(std::vector<float> &a) {
   return;
 }
 
-void randomdata(int scale) {
+std::vector<float> randomdata(int scale) {
   std::mt19937 rnd(std::time(nullptr));
-
+  std::vector<float> arr;
   arr.resize(scale);
   for (int i = 0; i < scale; i++) {
     arr[i] = rnd() % 1000;
   }
-  return;
+  return arr;
 }
 
-void sortdata(int scale) {
-  randomdata(scale);
+std::vector<float> sortdata(int scale) {
+  std::vector<float> arr = randomdata(scale);
   std::sort(arr.begin(), arr.end());
+  return arr;
 }
 
-void reversedata(int scale) {
-  randomdata(scale);
+std::vector<float> reversedata(int scale) {
+  std::vector<float> arr = randomdata(scale);
   std::sort(arr.begin(), arr.end(), std::greater<float>());
+  return arr;
 }
 
 using duration = std::chrono::duration<double, std::milli>;
 duration test(void (*sort_func)(std::vector<float> &),
-              std::function<void(int)> data_func, int scale, int repeat_times) {
+              std::function<std::vector<float>(int)> data_func, int scale,
+              int repeat_times) {
   auto total_time = duration(0);
   for (int i = 0; i < repeat_times; i++) {
-    data_func(scale);
+    std::vector<float> arr = data_func(scale);
     auto start = std::chrono::high_resolution_clock::now();
     sort_func(arr);
     auto end = std::chrono::high_resolution_clock::now();
@@ -166,7 +167,8 @@ duration test(void (*sort_func)(std::vector<float> &),
   return total_time / repeat_times;
 }
 
-std::function<void(int)> data_func_input(const std::string &data_func) {
+std::function<std::vector<float>(int)>
+data_func_input(const std::string &data_func) {
   if (data_func == "randomdata")
     return &randomdata;
   else if (data_func == "sortdata")
