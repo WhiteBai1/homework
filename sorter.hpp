@@ -6,7 +6,12 @@
 namespace my_sorter {
 void inplace_sort(std::ranges::random_access_range auto &arr, auto const &&cmp)
   requires std::is_invocable_r_v<bool, decltype(cmp), decltype(arr[0]),
-                                 decltype(arr[1])>
+                                 decltype(arr[1])> &&
+           requires(decltype(arr) &fake_arr) {
+             {
+               std::swap(arr[0], arr[1])
+             }; // require the elements to be swappable
+           }
 {
   // now let's just use bubble sort as a showcase
   bool sorted = true;

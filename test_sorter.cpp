@@ -8,9 +8,19 @@ struct BadStruct {
 };
 struct GoodStruct {
   int x;
-  auto operator<(GoodStruct const &another) const -> bool {
+  auto operator<(GoodStruct const &another) const noexcept -> bool {
     return x < another.x;
   }
+};
+
+struct Unmovable {
+  int x;
+  Unmovable() : x() {} // default constructor
+  Unmovable(int _x) : x(_x) {}
+  Unmovable(Unmovable const &) = delete;
+  Unmovable(Unmovable &&) = delete;
+  auto &operator=(Unmovable const &) = delete;
+  auto &operator=(Unmovable &&) = delete;
 };
 
 int main() {
@@ -78,6 +88,9 @@ int main() {
   }
   // uncomment me to see error log
   // my_sorter::inplace_sort(bad);
+  // however, we can pass custom compare function to sort it
+  my_sorter::inplace_sort(
+      bad, [](BadStruct const &a, BadStruct const &b) { return a.x < b.x; });
 
   std::vector<GoodStruct> good{};
   for (auto const &x : arr) {
@@ -90,4 +103,17 @@ int main() {
   }
   // line end
   std::putchar('\n');
+
+  // unmovable object cannot fit into vector, heck, but we can construct them
+  // all at once
+  auto *ptr = new Unmovable[n];
+  size_t ptr_offset = 0;
+  for (auto const &x : arr) {
+    ptr[ptr_offset++].x = x;
+  }
+  // uncomment me to see it doesn't satisfy swap constraint
+  //   my_sorter::inplace_sort(
+  //       std::span<Unmovable>{ptr, ptr + ptr_offset},
+  //       [](Unmovable const &a, Unmovable const &b) { return a.x < b.x; });
+  delete[] ptr;
 }
