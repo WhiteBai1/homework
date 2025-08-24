@@ -152,7 +152,7 @@ std::vector<float> reversedata(int scale) {
   return arr;
 }
 
-using duration = std::chrono::duration<double, std::milli>;
+using duration = std::chrono::duration<double>;
 duration test(void (*sort_func)(std::vector<float> &),
               std::function<std::vector<float>(int)> data_func, int scale,
               int repeat_times) {
@@ -180,8 +180,8 @@ data_func_input(const std::string &data_func) {
 }
 
 int main(int argc, char *argv[]) {
-  std::cout << "enter sort_func data_func scale repeat_times in sequence"
-            << '\n';
+  // std::cout << "enter sort_func data_func scale repeat_times in sequence"<<
+  // '\n';
   if (argc < 5) {
     std::cout << "input error" << '\n';
   }
@@ -209,6 +209,6 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  std::cout << result.count() << "ms" << '\n';
+  std::cout << result.count() << '\n';
   return 0;
 }
