@@ -1,6 +1,8 @@
 import subprocess
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+from collections import defaultdict
 
 class test_sort:
     def __init__(self,exe_path:str ='./test'):
@@ -54,9 +56,42 @@ class test_sort:
             
         return results
     
+    def plot_result(self,results:list[dict[str,any]]):
+        df = pd.DataFrame(results)
+
+        fig = plt.figure(figsize=(18, 6))
+    
+        data_types = ['randomdata', 'sortdata', 'reversedata']
+        colors = {'mergesort': 'blue', 'heapsort': 'green', 'quicksort': 'red'}
+    
+        for idx, data_type in enumerate(data_types):
+            ax = fig.add_subplot(1, 3, idx + 1)
+            
+            for sort_algo in ['mergesort', 'heapsort', 'quicksort']:
+                mask = (df['data_func'] == data_type) & (df['sort_func'] == sort_algo)
+                subset = df[mask].sort_values('scale')
+                
+                if not subset.empty:
+                    ax.plot(subset['scale'], subset['runtime'], 
+                       color=colors[sort_algo],
+                       label=sort_algo)
+            
+            ax.set_xscale('log')
+            ax.set_yscale('log')
+            ax.set_xlabel('Data Size')
+            ax.set_ylabel('Runtime (seconds)')
+            ax.set_title(f'Performance on {data_type}')
+            ax.grid(True, alpha=0.3)
+            ax.legend()
+        
+        plt.tight_layout()
+        plt.show()
+        
+    
 
 
 if __name__ == "__main__":
     tester = test_sort('./test')
     test_configs = tester.generate_test_configs()
     results = tester.run_test(test_configs)
+    tester.plot_result(results)
